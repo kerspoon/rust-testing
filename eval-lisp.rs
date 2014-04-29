@@ -56,16 +56,38 @@ fn evalLisp(this: Gc<Value>, env: &mut HashMap<~str,Gc<Value>>) -> Gc<Value> {
   }
 }
 
-fn main() {
-  let program = Gc::new(Symbol(~"hello"));
+//println!("bbb {}", strEvalInNewEnv(~"hello"));
+fn strEvalInNewEnv(text: ~str) -> ~str {
+  let parsed : Option<Value> = from_str(text);
+  match parsed {
+    None => {
+      ~"error parsing"
+    },
+    Some(val) => {
+      let program = Gc::new(val);
+      let mut env = HashMap::<~str,Gc<Value>>::new();
+      let res = evalLisp(program, &mut env);
+      res.borrow().to_str()
+    }
+  }
+}
+
+//println!("aaa {}", evalInNewEnv(Gc::new(Symbol(~"hello"))));
+fn evalInNewEnv(program: Gc<Value>) -> ~str {
   let mut env = HashMap::<~str,Gc<Value>>::new();
-  env.insert(~"null", Gc::new(Number(44)));
-
-  gen_symbol(&mut env, ~"nil");
-
   let res = evalLisp(program, &mut env);
+  res.borrow().to_str()
+}
 
-  println!("res {}", res.borrow());
+// runTest(~"()", ~"nil");
+fn runTest(input : ~str, expected: ~str) {
+  println!("testing {}", input);
+  let output = strEvalInNewEnv(input);
+  assert_eq!(expected, output);
+}
+
+fn main() {
+  runTest(~"()", ~"nil");
 }
 
 // put food in fridge
