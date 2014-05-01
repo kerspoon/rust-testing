@@ -89,5 +89,3 @@ fn runTest(input : ~str, expected: ~str) {
 fn main() {
   runTest(~"()", ~"nil");
 }
-
-// put food in fridge
