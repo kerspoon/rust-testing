@@ -27,7 +27,7 @@ impl FromStr for Value {
 
         let starts_with_number = regex!(r"^-|\d");
 
-        if s == "nil" {
+        if s == "nil" || s == "()" {
             Some(Nil)
         } else if s == "true" {
             Some(True)
@@ -176,5 +176,14 @@ fn number_from_string() {
             Some(Number(x)) => assert_eq!(x, -9.01),
             _ => assert!(false)
         }
+    }
+}
+
+#[test]
+fn empty_pair_from_string() {
+    let tmp: Option<Value> = from_str("()");
+    match tmp {
+        Some(Nil) => assert!(true),
+        _ => assert!(false)
     }
 }
