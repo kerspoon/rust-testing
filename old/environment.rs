@@ -16,7 +16,7 @@ struct Env {
   frame : HashMap<~str,Gc<Value>>,
   parent : Option<Gc<Env>>
 }
-
+/*
 // get from the environment a value.
 // if it is not in this frame then look in parent
 // if there is no parent then return Nil.
@@ -34,25 +34,26 @@ fn envGet(env: & Env, key: ~str) -> Gc<Value> {
     }
   }
 }
-
-fn envAdd(env: &mut Env, key: ~str, val: Gc<Value>) {
-  env.frame.insert(key.clone(), val.clone());
+*/
+fn envAdd(env: &mut Gc<Env>, key: ~str, val: Gc<Value>) {
+  let ref mut borrowed = env.borrow();
+  borrowed.frame.insert(key.clone(), val.clone());
 }
 
 fn test_basic() {
-  let mut env = Env {
+  let mut env = Gc::new(Env {
     frame: HashMap::<~str,Gc<Value>>::new(),
     parent: None
-  };
+  });
 
   let num = Gc::new(Number(4));
   envAdd(&mut env, ~"hi", num.clone());
-  let num2 = envGet(&mut env, ~"hi");
-  assert!(num.ptr_eq(&num2));
+  //let num2 = envGet(&mut env, ~"hi");
+  // assert!(num.ptr_eq(&num2));
 }
 
+/*
 
-// I'll probably need garbage collection here for the returned value
 fn envNewFrame(env: &mut Gc<Env>) -> Gc<Env> {
   Gc::new(Env {
     frame: HashMap::<~str,Gc<Value>>::new(),
@@ -79,7 +80,22 @@ fn test_new_frame() {
   }
 }
 
+fn test_add_to_new_frame() {
+  let mut env = Gc::new(Env {
+    frame: HashMap::<~str,Gc<Value>>::new(),
+    parent: None
+  });
+
+  let newEnv = envNewFrame(&mut env);
+  let newEnvBorrow = newEnv.borrow();
+
+  let num = Gc::new(Number(4));
+  envAdd(&mut newEnvBorrow, ~"hi", num.clone());
+  let num2 = envGet(&mut env, ~"hi");
+  assert!(num.ptr_eq(&num2));
+}
+*/
 fn main() {
   test_basic();
-  test_new_frame();
+  // test_new_frame();
 }
