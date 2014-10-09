@@ -59,7 +59,7 @@ impl fmt::Show for Value {
             String(ref x) => write!(f, "\"{}\"", x.replace("\"", "\\\"")),
             Number(x) => write!(f, "{}", x),
             Pair(ref x, ref y) => write!(f, "({}, {})", x.to_string(), y.to_string()),
-            _ => fail!("not implemented")
+            Lambda(_, _) => write!(f, "#!lambda")
         }
     }
 }
@@ -114,6 +114,11 @@ fn number_to_string() {
 fn pair_to_string() {
     assert_eq!("(true, false)", Pair(box True, box False).to_string().as_slice());
     assert_eq!("(4, \"hi\")", Pair(box Number(4.0), box String("hi".to_string())).to_string().as_slice());
+}
+
+#[test]
+fn lambda_to_string() {
+    assert_eq!("#!lambda", Lambda(box True, box False).to_string().as_slice());
 }
 
 #[test]
